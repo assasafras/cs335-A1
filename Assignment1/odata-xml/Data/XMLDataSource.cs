@@ -54,6 +54,7 @@ namespace odata_xml.Data
             {
 
                 var xmlString = reader.ReadToEnd();
+                // Replace illegal characters within the XML.
                 xmlString = xmlString.Replace("&", "&amp;");
                 xmlString = xmlString.Replace("\"", "&quot;");
                 xmlString = xmlString.Replace("'", "&apos;");
@@ -77,7 +78,8 @@ namespace odata_xml.Data
         {
             using (var reader = new StreamReader(employeesXMLPath))//, Encoding.GetEncoding("iso-8859-1")))
             {
-                var xmlString = reader.ReadToEnd();
+                string xmlString = reader.ReadToEnd();
+                // Replace illegal characters within the XML.
                 xmlString = xmlString.Replace("&", "&amp;");
                 xmlString = xmlString.Replace("\"", "&quot;");
                 xmlString = xmlString.Replace("'", "&apos;");
@@ -114,7 +116,7 @@ namespace odata_xml.Data
                     // inner join on customers and left join on employees.
                     orders = (from o in orderElements
                               join customer in customers on o.Element("CustomerID").Value equals customer.CustomerID
-                              join employee in employees on ParseInt(o.Element("EmployeeID").Value) equals employee.EmployeeID into gj
+                              join employee in employees on o.Element("EmployeeID").ParseInt() equals employee.EmployeeID into gj
                               from e in gj.DefaultIfEmpty()
                               select new Order
                               {
@@ -124,9 +126,9 @@ namespace odata_xml.Data
                                   OrderDate = (DateTime)o.Element("OrderDate"),
                                   ShipCountry = (string)o.Element("ShipCountry"),
                                   ShipName = (string)o.Element("ShipName"),
-                                  ShippedDate = ParseDateTime(o.Element("ShippedDate").Value),
+                                  ShippedDate = o.Element("ShippedDate").ParseDateTime(),
                                   CustomerID = (string)o.Element("CustomerID"),
-                                  EmployeeID = ParseInt(o.Element("EmployeeID").Value),
+                                  EmployeeID = o.Element("EmployeeID").ParseInt(),
                                   Customer = customer,
                                   Employee = e
                               }).ToArray();
@@ -136,36 +138,6 @@ namespace odata_xml.Data
                     throw;
                 }
             }
-        }
-
-        private static DateTime? ParseDateTime(string input)
-        {
-            DateTime? output = null;
-            try
-            {
-                output = DateTime.Parse(input);
-            }
-            catch (Exception e)
-            {
-                Debug.Print($"Unable to Parse \"{input}\" to nullable DateTime!");
-            }
-            return output;
-        }
-
-        private static int? ParseInt(string input)
-        {
-            // Set the default as null.
-            int? output = null;
-            try
-            {
-                // Try parse to an integer.
-                output = int.Parse(input);
-            }
-            catch (Exception e)
-            {
-                Debug.Print($"Unable to Parse \"{input}\" to nullable int!");
-            }
-            return output;
         }
     }
 }

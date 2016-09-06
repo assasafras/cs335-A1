@@ -82,7 +82,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="odata-sql.svc" />
     <Content Include="XMLService.svc" />
     <Content Include="Web.config" />
     <Content Include="XOrders.xml" />
@@ -91,9 +90,7 @@
     <Compile Include="Data\Customer.cs" />
     <Compile Include="Data\Employee.cs" />
     <Compile Include="Data\Order.cs" />
-    <Compile Include="odata-sql.svc.cs">
-      <DependentUpon>odata-sql.svc</DependentUpon>
-    </Compile>
+    <Compile Include="Extensions.cs" />
     <Compile Include="XMLService.svc.cs">
       <DependentUpon>XMLService.svc</DependentUpon>
     </Compile>
